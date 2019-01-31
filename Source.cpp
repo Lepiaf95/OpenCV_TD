@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/Mat.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
@@ -9,7 +10,6 @@ using namespace cv;
 
 void exo1() // Chargement et affichage d'une ilage
 {
-	namedWindow("image", WINDOW_AUTOSIZE );
 	Mat img = imread("images/landscape.jpg");
 	
 	if (img.empty())
@@ -22,12 +22,10 @@ void exo1() // Chargement et affichage d'une ilage
 
 void exo2() // Filtrage linéaire
 {
-	namedWindow("image_source", WINDOW_AUTOSIZE);
 	Mat img_source = imread("images/plane.jpg");
 	if (img_source.empty())
 			cout << "Cette image est vide !" << endl;
 
-	namedWindow("image_destination", WINDOW_AUTOSIZE);
 	Mat img_destination;
 
 	Mat noyau = Mat::ones(Size(3,3), CV_32F);
@@ -44,18 +42,14 @@ void exo2() // Filtrage linéaire
 
 void exo3() // Lissage de l'image
 {
-	namedWindow("image_source", WINDOW_AUTOSIZE);
 	Mat img_source = imread("images/monalisa.jpg");
 	if (img_source.empty())
 		cout << "Cette image est vide !" << endl;
 
-	namedWindow("image_gaussien", WINDOW_AUTOSIZE);
 	Mat img_gaussien;
 
-	namedWindow("image_median", WINDOW_AUTOSIZE);
 	Mat img_median;
 
-	namedWindow("image_bilateral", WINDOW_AUTOSIZE);
 	Mat img_bilateral;
 
 	GaussianBlur(img_source, img_gaussien,Size(5,5),0);
@@ -74,15 +68,12 @@ void exo3() // Lissage de l'image
 
 void exo4() // Morphologie mathématiques
 {
-	namedWindow("image_source", WINDOW_AUTOSIZE);
 	Mat img_source = imread("images/apple.png");
 	if (img_source.empty())
 		cout << "Cette image est vide !" << endl;
 
-	namedWindow("image_dilatee", WINDOW_AUTOSIZE);
 	Mat img_dilatee;
 
-	namedWindow("image_erodee", WINDOW_AUTOSIZE);
 	Mat img_erodee;
 
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(7, 7));
@@ -104,64 +95,123 @@ void exo5() // Seuillage de l'image
 	if (img_source.empty())
 		cout << "Cette image est vide !" << endl;
 
-	namedWindow("image_resultat", WINDOW_AUTOSIZE);
+	namedWindow("threshold", WINDOW_AUTOSIZE);
 	Mat img_resultat;
 
-	// Faire une autre fonction !!!!
-	medianBlur(img_source, img_resultat, 5);
+	// Convertir l'image en gris
+	namedWindow("image_source_grise", WINDOW_AUTOSIZE);
+	Mat img_source_gray = imread("images/tiger.jpg", IMREAD_GRAYSCALE);
+
+
+	threshold(img_source_gray, img_resultat, 100, 255, THRESH_BINARY);
 
 	imshow("image_source", img_source);
-	imshow("image_resultat", img_resultat);
+	imshow("image_source_grise", img_source_gray);
+	imshow("threshold", img_resultat);
 	waitKey(0);
 	destroyAllWindows();
 }
 
 void exo6() // Détection et contours
 {
-	namedWindow("image_source", WINDOW_AUTOSIZE);
 	Mat img_source = imread("images/building.jpg");
 	if (img_source.empty())
 		cout << "Cette image est vide !" << endl;
 
-	namedWindow("image_resultat", WINDOW_AUTOSIZE);
-	Mat img_resultat;
+	Mat img_resultat1;
+	Mat img_resultat2 = imread("images/building.jpg", IMREAD_GRAYSCALE);
+	Mat img_resultat3;
 
-	// Faire une autre fonction !!!!
-	medianBlur(img_source, img_resultat, 5);
+	// Convertir l'image en gris
+	Mat img_source_gray;
+	cvtColor(img_source, img_source_gray, COLOR_BGR2GRAY);
+
+	Laplacian(img_source_gray, img_resultat1, 16, 3);
+	convertScaleAbs(img_resultat1, img_resultat1);
+	// Sobel()
+	Canny(img_source, img_resultat3, 20, 110);
+
 
 	imshow("image_source", img_source);
-	imshow("image_resultat", img_resultat);
+	imshow("image_source_grise", img_source_gray);
+	imshow("laplacian", img_resultat1);
+	imshow("image_source_grise2", img_resultat2);
+	imshow("canny", img_resultat3);
 	waitKey(0);
 	destroyAllWindows();
 }
 
 void exo7() // Egalisaton d'histogrammes
 {
-	namedWindow("image_source", WINDOW_AUTOSIZE);
 	Mat img_source = imread("images/bird.jpg");
 	if (img_source.empty())
 		cout << "Cette image est vide !" << endl;
+	Mat img_source_gray;
+	// Convertir l'image en gris
+	cvtColor(img_source, img_source_gray, COLOR_BGR2GRAY);
 
-	namedWindow("image_resultat", WINDOW_AUTOSIZE);
 	Mat img_resultat;
 
 	// Faire une autre fonction !!!!
-	medianBlur(img_source, img_resultat, 5);
+	equalizeHist(img_source_gray, img_resultat);
 
 	imshow("image_source", img_source);
+	imshow("image_source_grise", img_source_gray);
 	imshow("image_resultat", img_resultat);
 	waitKey(0);
 	destroyAllWindows();
 }
 
-int main() 
-{	
+void exo8()
+{
+	Mat img_source = imread("images/bus.jpg");
+	if (img_source.empty())
+		cout << "Cette image est vide !" << endl;
+	Mat img_source_modele = imread("images/bus_template.png");
+	if (img_source_modele.empty())
+		cout << "Cette image est vide !" << endl;
+
+	Mat img_resultat;
+
+	double minVal;
+	double maxVal;
+	Point minLoc;
+	Point maxLoc;
+
+	matchTemplate(img_source, img_source_modele, img_resultat, TM_SQDIFF_NORMED);
+	minMaxLoc(img_resultat, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+	rectangle(img_source, minLoc, Point(minLoc.x + img_source_modele.cols, minLoc.y + img_source_modele.rows), Scalar::all(0), 2, 8, 0);
+
+	imshow("image_source", img_source);
+	imshow("image_source_modele", img_source_modele);
+	imshow("matchTemplate", img_resultat);
+	waitKey(0);
+	destroyAllWindows();
+}
+
+
+void Partie1()
+{
 	exo1();
 	exo2();
-	exo3();
+	exo3();		
 	exo4();
 	exo5();
 	exo6();
 	exo7();
+}
+
+void Partie2()
+{
+	exo8();
+}
+int main() 
+{	
+	// Partie 1
+	//Partie1();
+
+	// Partie 2
+	Partie2();
+
 	return 0;
 }
