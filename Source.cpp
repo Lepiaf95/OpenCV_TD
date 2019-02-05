@@ -152,7 +152,6 @@ void exo7() // Egalisaton d'histogrammes
 
 	Mat img_resultat;
 
-	// Faire une autre fonction !!!!
 	equalizeHist(img_source_gray, img_resultat);
 
 	imshow("image_source", img_source);
@@ -162,7 +161,7 @@ void exo7() // Egalisaton d'histogrammes
 	destroyAllWindows();
 }
 
-void exo8()
+void exo8() // Appariement d'images
 {
 	Mat img_source = imread("images/bus.jpg");
 	if (img_source.empty())
@@ -189,6 +188,51 @@ void exo8()
 	destroyAllWindows();
 }
 
+void exo9() // Détection de contours
+{
+	Mat img_source = imread("images/porsche.jpg");
+	if (img_source.empty())
+		cout << "Cette image est vide !" << endl;
+
+	Mat img_source_gray;
+	cvtColor(img_source, img_source_gray, COLOR_BGR2GRAY);
+
+	Mat img_resultat;
+	Canny(img_source, img_resultat, 100, 200);
+
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+	findContours(img_resultat, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+
+	// Tracer les contours trouvés
+	RNG rng(12345);
+	Mat drawing = Mat::zeros(img_resultat.size(), CV_8UC3);
+	for (int i = 0; i < contours.size(); i++)
+	{
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+	}
+
+	imshow("image_source", img_source);
+	imshow("image_source_grise", img_source_gray);
+	imshow("matchTemplate", img_resultat);
+	imshow("contours", drawing);
+	waitKey(0);
+	destroyAllWindows();
+}
+
+void exo10() // Enveloppe convexe
+{
+	Mat image(Size(500, 500), CV_32F);
+	while (1)
+	{
+		vector<vector<Point> > points;
+	}
+
+	imshow("enveloppe convexe", image);
+	waitKey(0);
+	destroyAllWindows();
+}
 
 void Partie1()
 {
@@ -204,6 +248,8 @@ void Partie1()
 void Partie2()
 {
 	exo8();
+	exo9();
+	exo10();
 }
 int main() 
 {	
