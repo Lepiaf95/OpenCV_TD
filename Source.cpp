@@ -20,7 +20,7 @@ void exo1() // Chargement et affichage d'une ilage
 	destroyWindow("image");
 }
 
-void exo2() // Filtrage linéaire
+void exo2() // Filtrage linÃ©aire
 {
 	Mat img_source = imread("images/plane.jpg");
 	if (img_source.empty())
@@ -66,7 +66,7 @@ void exo3() // Lissage de l'image
 
 }
 
-void exo4() // Morphologie mathématiques
+void exo4() // Morphologie mathÃ©matiques
 {
 	Mat img_source = imread("images/apple.png");
 	if (img_source.empty())
@@ -112,7 +112,7 @@ void exo5() // Seuillage de l'image
 	destroyAllWindows();
 }
 
-void exo6() // Détection et contours
+void exo6() // DÃ©tection et contours
 {
 	Mat img_source = imread("images/building.jpg");
 	if (img_source.empty())
@@ -188,7 +188,7 @@ void exo8() // Appariement d'images
 	destroyAllWindows();
 }
 
-void exo9() // Détection de contours
+void exo9() // DÃ©tection de contours
 {
 	Mat img_source = imread("images/porsche.jpg");
 	if (img_source.empty())
@@ -204,7 +204,7 @@ void exo9() // Détection de contours
 	vector<Vec4i> hierarchy;
 	findContours(img_resultat, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
 
-	// Tracer les contours trouvés
+	// Tracer les contours trouvÃ©s
 	RNG rng(12345);
 	Mat drawing = Mat::zeros(img_resultat.size(), CV_8UC3);
 	for (int i = 0; i < contours.size(); i++)
@@ -223,6 +223,7 @@ void exo9() // Détection de contours
 
 void exo10() // Enveloppe convexe
 {
+	// In progress
 	Mat image(Size(500, 500), CV_32F);
 	while (1)
 	{
